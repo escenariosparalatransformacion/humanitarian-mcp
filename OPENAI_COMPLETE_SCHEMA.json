@@ -237,11 +237,39 @@
                 "required": ["target_stakeholder_name", "stakeholders_analysis_json"],
                 "properties": {
                   "target_stakeholder_name": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Name of the stakeholder to develop influence tactics for"
                   },
                   "stakeholders_analysis_json": {
                     "type": "object",
-                    "description": "Complete output from stakeholder analysis"
+                    "description": "Complete stakeholder analysis output (with 'stakeholders' array inside)",
+                    "properties": {
+                      "analysis_context": {
+                        "type": "string"
+                      },
+                      "total_stakeholders": {
+                        "type": "integer"
+                      },
+                      "stakeholders": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {"type": "string"},
+                            "power": {"type": "number"},
+                            "urgency": {"type": "number"},
+                            "legitimacy": {"type": "number"},
+                            "position": {"type": "number"},
+                            "salience_score": {"type": "number"},
+                            "priority_level": {"type": "string"},
+                            "influenced_by": {"type": "array", "items": {"type": "string"}}
+                          }
+                        }
+                      },
+                      "priority_summary": {
+                        "type": "object"
+                      }
+                    }
                   },
                   "response_format": {
                     "type": "string",
@@ -255,7 +283,7 @@
         },
         "responses": {
           "200": {
-            "description": "Tactics developed"
+            "description": "Tactics developed successfully"
           }
         }
       }
