@@ -59,17 +59,34 @@ This MCP server implements three proven methodologies used by humanitarian negot
 
 ### Quick Start (Automated)
 
+#### Claude Desktop (Recommended)
+
 **Windows Users:**
 ```bash
 INSTALL_MCP_CLAUDE_DESKTOP.bat
 ```
+
+**macOS/Linux Users:**
+```bash
+python setup.py
+```
+
 This script will automatically:
 - Verify Python installation
 - Install all dependencies
-- Configure Claude Desktop
+- Configure Claude Desktop / MCP
 - Validate the setup
 
 Then restart Claude Desktop and you're ready to go!
+
+#### ChatGPT / OpenAI Integration
+
+To use this MCP as a Custom GPT action in ChatGPT:
+
+1. See [OPENAI_INTEGRATION.md](OPENAI_INTEGRATION.md) for detailed setup
+2. Deploy the HTTP server (see Deployment section)
+3. Use `OPENAI_COMPLETE_SCHEMA.json` for custom GPT integration
+4. Full guide includes authentication, deployment options, and examples
 
 ### Prerequisites
 
