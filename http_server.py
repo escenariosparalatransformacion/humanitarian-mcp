@@ -509,7 +509,7 @@ def main():
     print()
 
     uvicorn.run(
-        "http_server:app",
+        app=app,
         host="0.0.0.0",
         port=port,
         reload=False,
