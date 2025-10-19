@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server providing specialized tools for analyzing and conducting humanitarian negotiations in high-stakes, complex environments.
 
+**Developed by**: Jhozman Camacho
+**License**: MIT
+**Repository**: Available for public use and contribution
+
 ## Overview
 
 This MCP server implements three proven methodologies used by humanitarian negotiators, mediators, and aid workers:
@@ -53,33 +57,39 @@ This MCP server implements three proven methodologies used by humanitarian negot
 
 ## Installation
 
+### Quick Start (Automated)
+
+**Windows Users:**
+```bash
+INSTALL_MCP_CLAUDE_DESKTOP.bat
+```
+This script will automatically:
+- Verify Python installation
+- Install all dependencies
+- Configure Claude Desktop
+- Validate the setup
+
+Then restart Claude Desktop and you're ready to go!
+
 ### Prerequisites
 
 - Python 3.10 or higher
 - pip package manager
+- Claude Desktop application
 
-### Install Dependencies
+### Manual Installation
 
+1. **Install dependencies:**
 ```bash
-pip install -r requirements.txt
+pip install -r requirements_mcp.txt
 ```
 
-The `requirements.txt` should contain:
-```
-anthropic>=0.18.0
-mcp>=0.9.0
-pydantic>=2.0.0
-httpx>=0.24.0
-```
-
-### Add to Claude Desktop
-
-1. Edit your Claude Desktop config file:
+2. **Locate your Claude Desktop config:**
    - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
    - **Windows**: `%APPDATA%/Claude/claude_desktop_config.json`
+   - **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
-2. Add the server configuration:
-
+3. **Add the server configuration:**
 ```json
 {
   "mcpServers": {
@@ -91,7 +101,16 @@ httpx>=0.24.0
 }
 ```
 
-3. Restart Claude Desktop
+4. **Restart Claude Desktop**
+
+### Verification
+
+After installation, you should see these 5 tools available in Claude Desktop:
+- `humanitarian_create_island_of_agreement`
+- `humanitarian_analyze_icebergs`
+- `humanitarian_analyze_stakeholders`
+- `humanitarian_leverage_stakeholder_influence`
+- `humanitarian_negotiation_guide`
 
 ## Usage Examples
 
@@ -288,8 +307,48 @@ For questions about specific use cases or to report issues, provide detailed con
 
 ## License
 
-[Your chosen license]
+This project is licensed under the MIT License - see below for details.
+
+```
+MIT License
+
+Copyright (c) 2025 Jhozman Camacho
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Author
+
+**Jhozman Camacho** - Initial development and architecture
 
 ## Acknowledgments
 
-Methodologies based on established humanitarian negotiation practices and frameworks used by international humanitarian organizations.
+This MCP server implements established humanitarian negotiation practices and frameworks:
+- Island of Agreement (IoA) methodology used in UN humanitarian operations
+- Iceberg and Common Shared Space (CSS) analysis from ICRC negotiation practices
+- Stakeholder Analysis framework adapted from Mitchell-Agle-Wood model for humanitarian contexts
+
+Special thanks to:
+- Anthropic for the Model Context Protocol (MCP)
+- The humanitarian negotiation community for validated methodologies
+- All contributors and users providing feedback and improvements

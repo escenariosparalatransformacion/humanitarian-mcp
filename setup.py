@@ -2,6 +2,10 @@
 """
 Setup script for Humanitarian Negotiation MCP Server
 Helps configure the server for use with Claude Desktop
+
+Developed by: Jhozman Camacho
+License: MIT
+Author: Jhozman Camacho
 """
 
 import json
@@ -72,6 +76,8 @@ def main():
     """Main setup function."""
     print("=" * 70)
     print("Humanitarian Negotiation MCP Server - Setup")
+    print("Developed by: Jhozman Camacho")
+    print("License: MIT")
     print("=" * 70)
     print()
     
