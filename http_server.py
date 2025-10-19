@@ -20,9 +20,36 @@ from typing import Optional, List, Dict, Any, Literal
 import uvicorn
 import sys
 import os
+from datetime import datetime, timedelta
 
 # No need to import the MCP directly for REST API
 # All endpoints return structured responses without calling the MCP
+
+# ============================================================================
+# Global Cache for Stakeholder Analysis
+# ============================================================================
+# Stores the latest stakeholder analysis so Tool 4 can use it without copy-paste
+
+analysis_cache = {
+    "latest_stakeholder_analysis": None,
+    "timestamp": None
+}
+
+def store_analysis(analysis: Dict[str, Any]):
+    """Store stakeholder analysis for Tool 4 to use"""
+    analysis_cache["latest_stakeholder_analysis"] = analysis
+    analysis_cache["timestamp"] = datetime.now()
+
+def get_latest_analysis() -> Optional[Dict[str, Any]]:
+    """Retrieve latest stakeholder analysis (valid for 30 minutes)"""
+    if not analysis_cache["latest_stakeholder_analysis"]:
+        return None
+
+    # Check if analysis is still valid (30 minutes)
+    if datetime.now() - analysis_cache["timestamp"] > timedelta(minutes=30):
+        return None
+
+    return analysis_cache["latest_stakeholder_analysis"]
 
 # ============================================================================
 # Initialize FastAPI App
@@ -171,9 +198,20 @@ class InfluenceLeverageRequest(BaseModel):
         ...,
         description="Name of the stakeholder to influence"
     )
-    stakeholders_analysis_json: Dict[str, Any] = Field(
+    stakeholders_analysis_json: Optional[Dict[str, Any]] = Field(
+        None,
+        description="Previous stakeholder analysis output in JSON format (optional - uses latest if not provided)"
+    )
+    response_format: Literal["markdown", "json"] = Field(
+        "markdown",
+        description="Output format preference"
+    )
+
+class InfluenceLeverageAutoRequest(BaseModel):
+    """Request model for Influence Leverage (Auto - uses cached analysis)"""
+    target_stakeholder_name: str = Field(
         ...,
-        description="Previous stakeholder analysis output in JSON format"
+        description="Name of the stakeholder to influence"
     )
     response_format: Literal["markdown", "json"] = Field(
         "markdown",
@@ -457,6 +495,9 @@ async def api_analyze_stakeholders(request: StakeholderAnalysisRequest):
             ]
         }
 
+        # Store analysis in cache for Tool 4 to use automatically
+        store_analysis(result)
+
         return APIResponse(
             success=True,
             data=result,
@@ -476,11 +517,26 @@ async def api_leverage_influence(request: InfluenceLeverageRequest):
 
     Based on a previous stakeholder analysis, develops specific tactics to
     influence a particular stakeholder by leveraging coalitions and relationships.
+
+    If stakeholders_analysis_json is not provided, uses the latest from stakeholder analysis.
     """
     try:
+        # Use provided analysis or get the latest from cache
+        analysis = request.stakeholders_analysis_json
+
+        if not analysis:
+            # Try to use cached analysis from Tool 3
+            analysis = get_latest_analysis()
+            if not analysis:
+                return APIResponse(
+                    success=False,
+                    error="No stakeholder analysis provided and no cached analysis available. Run stakeholder analysis first.",
+                    message="Missing analysis data"
+                )
+
         # Find target stakeholder in analysis
         target = None
-        stakeholders = request.stakeholders_analysis_json.get("stakeholders", [])
+        stakeholders = analysis.get("stakeholders", [])
         for sh in stakeholders:
             if sh.get("name") == request.target_stakeholder_name:
                 target = sh
@@ -489,7 +545,7 @@ async def api_leverage_influence(request: InfluenceLeverageRequest):
         if not target:
             return APIResponse(
                 success=False,
-                error=f"Stakeholder '{request.target_stakeholder_name}' not found in analysis",
+                error=f"Stakeholder '{request.target_stakeholder_name}' not found in analysis. Available stakeholders: {[s.get('name') for s in stakeholders]}",
                 message="Stakeholder not found"
             )
 
@@ -547,6 +603,102 @@ async def api_leverage_influence(request: InfluenceLeverageRequest):
             success=True,
             data=result,
             message="Influence tactics developed successfully"
+        )
+    except Exception as e:
+        return APIResponse(
+            success=False,
+            error=str(e),
+            message="Failed to develop tactics"
+        )
+
+@app.post("/api/v1/leverage-influence-latest", response_model=APIResponse, tags=["Analysis Tools"])
+async def api_leverage_influence_latest(request: InfluenceLeverageAutoRequest):
+    """
+    Develop influence tactics using the latest stakeholder analysis
+
+    Automatically uses the most recent stakeholder analysis without requiring you to copy-paste data.
+    Simply provide the target stakeholder name and it will use the analysis from the previous run.
+    """
+    try:
+        # Get the latest cached analysis
+        analysis = get_latest_analysis()
+        if not analysis:
+            return APIResponse(
+                success=False,
+                error="No cached stakeholder analysis available. Run stakeholder analysis first.",
+                message="Missing analysis data"
+            )
+
+        # Find target stakeholder in analysis
+        target = None
+        stakeholders = analysis.get("stakeholders", [])
+        for sh in stakeholders:
+            if sh.get("name") == request.target_stakeholder_name:
+                target = sh
+                break
+
+        if not target:
+            available = [s.get("name") for s in stakeholders]
+            return APIResponse(
+                success=False,
+                error=f"Stakeholder '{request.target_stakeholder_name}' not found in analysis. Available: {available}",
+                message="Stakeholder not found"
+            )
+
+        # Identify potential allies and opponents
+        allies = [s for s in stakeholders if s.get("position", 0) > 0.5 and s.get("name") != request.target_stakeholder_name]
+        opponents = [s for s in stakeholders if s.get("position", 0) < -0.5]
+
+        # Develop tactics based on stakeholder profile
+        result = {
+            "target_stakeholder": request.target_stakeholder_name,
+            "target_profile": {
+                "power": target.get("power", 0),
+                "urgency": target.get("urgency", 0),
+                "legitimacy": target.get("legitimacy", 0),
+                "position": target.get("position", 0),
+                "priority_level": target.get("priority_level", "Unknown")
+            },
+            "influence_strategy": {
+                "primary_approach": "Coalition building" if target.get("position", 0) >= 0 else "Negotiation",
+                "target_psychology": "Leverage shared interests" if target.get("position", 0) > 0 else "Find common ground",
+                "communication_tone": "Collaborative" if target.get("position", 0) > 0 else "Professional and neutral"
+            },
+            "tactical_options": [
+                {
+                    "tactic": "Coalition Building",
+                    "description": "Unite with supportive stakeholders to increase influence",
+                    "allies": [a["name"] for a in allies[:3]],
+                    "effectiveness": "High" if allies else "Moderate"
+                },
+                {
+                    "tactic": "Value Alignment",
+                    "description": "Emphasize shared values and mutual benefits",
+                    "approach": "Identify and highlight areas of agreement"
+                },
+                {
+                    "tactic": "Information Strategy",
+                    "description": "Provide relevant data and analysis to influence decision-making",
+                    "focus": "Focus on facts and evidence"
+                },
+                {
+                    "tactic": "Stakeholder Leverage",
+                    "description": "Use influenced stakeholders to reinforce influence",
+                    "influenced_by": target.get("influenced_by", [])
+                }
+            ],
+            "key_recommendations": [
+                f"Prioritize engagement with {request.target_stakeholder_name} given their {target.get('priority_level')} priority level",
+                f"Leverage {len(allies)} identified allies for coalition building",
+                "Present evidence-based arguments aligned with their interests",
+                "Maintain regular communication to track position changes"
+            ]
+        }
+
+        return APIResponse(
+            success=True,
+            data=result,
+            message="Influence tactics developed successfully using latest analysis"
         )
     except Exception as e:
         return APIResponse(

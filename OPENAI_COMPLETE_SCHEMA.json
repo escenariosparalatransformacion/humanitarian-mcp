@@ -227,22 +227,22 @@
       "post": {
         "operationId": "leverageInfluence",
         "summary": "Develop influence tactics for target stakeholder",
-        "description": "Based on stakeholder analysis, develops tactics to influence specific stakeholder",
+        "description": "Develops tactics to influence a specific stakeholder. Automatically uses the latest stakeholder analysis if no analysis data is provided - just run stakeholder analysis first!",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["target_stakeholder_name", "stakeholders_analysis_json"],
+                "required": ["target_stakeholder_name"],
                 "properties": {
                   "target_stakeholder_name": {
                     "type": "string",
-                    "description": "Name of the stakeholder to develop influence tactics for"
+                    "description": "Name of the stakeholder to develop influence tactics for (e.g., 'Riverland Government')"
                   },
                   "stakeholders_analysis_json": {
                     "type": "object",
-                    "description": "Complete stakeholder analysis output (with 'stakeholders' array inside)",
+                    "description": "Optional: Complete stakeholder analysis output. If not provided, automatically uses the latest from stakeholder analysis. Only include if you want to use a different analysis.",
                     "properties": {
                       "analysis_context": {
                         "type": "string"
@@ -284,6 +284,41 @@
         "responses": {
           "200": {
             "description": "Tactics developed successfully"
+          }
+        }
+      }
+    },
+    "/api/v1/leverage-influence-latest": {
+      "post": {
+        "operationId": "leverageInfluenceLatest",
+        "summary": "Develop influence tactics using latest stakeholder analysis",
+        "description": "Automatically uses the most recent stakeholder analysis! No need to copy-paste data. Just run stakeholder analysis first, then use this to develop tactics.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["target_stakeholder_name"],
+                "properties": {
+                  "target_stakeholder_name": {
+                    "type": "string",
+                    "description": "Name of the stakeholder to develop influence tactics for (e.g., 'Riverland Government')"
+                  },
+                  "response_format": {
+                    "type": "string",
+                    "enum": ["markdown", "json"],
+                    "default": "markdown",
+                    "description": "Output format preference"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tactics developed successfully using latest analysis"
           }
         }
       }
