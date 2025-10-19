@@ -1,0 +1,106 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "humanitarian-negotiation-mcp"
+version = "1.0.0"
+description = "MCP server for humanitarian negotiation analysis using proven methodologies"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Humanitarian MCP Contributors", email = "contact@humanitarian-mcp.org"}
+]
+keywords = [
+    "mcp",
+    "model-context-protocol",
+    "humanitarian",
+    "negotiation",
+    "mediation",
+    "analysis",
+    "conflict-resolution"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Other Audience",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Office/Business",
+    "Topic :: Communications",
+]
+
+dependencies = [
+    "anthropic>=0.18.0",
+    "mcp>=0.9.0",
+    "pydantic>=2.0.0",
+    "httpx>=0.24.0",
+    "python-dateutil>=2.8.0",
+]
+
+[project.optional-dependencies]
+http = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.24.0",
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.4.0",
+    "ruff>=0.0.285",
+]
+all = [
+    "humanitarian-negotiation-mcp[http,dev]",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/humanitarian-negotiation-mcp"
+Documentation = "https://github.com/yourusername/humanitarian-negotiation-mcp#readme"
+Repository = "https://github.com/yourusername/humanitarian-negotiation-mcp"
+"Bug Tracker" = "https://github.com/yourusername/humanitarian-negotiation-mcp/issues"
+
+[project.scripts]
+humanitarian-mcp = "humanitarian_negotiation_mcp:main"
+humanitarian-mcp-http = "http_server:main"
+
+[tool.setuptools]
+packages = ["."]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_mode = 3
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]  # Line too long (handled by black)

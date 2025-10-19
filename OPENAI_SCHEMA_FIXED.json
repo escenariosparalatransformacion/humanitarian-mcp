@@ -1,0 +1,215 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Humanitarian Negotiation MCP API",
+    "version": "1.0.0",
+    "description": "Tools for humanitarian negotiation analysis"
+  },
+  "servers": [
+    {
+      "url": "https://3953334c0179.ngrok-free.app"
+    }
+  ],
+  "paths": {
+    "/api/v1/island-of-agreement": {
+      "post": {
+        "operationId": "createIslandOfAgreement",
+        "summary": "Create Island of Agreement analysis",
+        "description": "Analyzes a negotiation by mapping contested vs. agreed facts and convergent vs. divergent norms between two parties.",
+        "tags": ["Analysis"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["situation_description", "organization_name", "counterpart_name"],
+                "properties": {
+                  "situation_description": {
+                    "type": "string",
+                    "description": "Comprehensive description of the negotiation situation (e.g., 'UN agency negotiating with regional government for access to IDP camps')",
+                    "minLength": 50
+                  },
+                  "organization_name": {
+                    "type": "string",
+                    "description": "Name of your organization (e.g., 'World Food Programme')",
+                    "minLength": 2
+                  },
+                  "counterpart_name": {
+                    "type": "string",
+                    "description": "Name of the counterpart/opposing party (e.g., 'Ministry of Interior')",
+                    "minLength": 2
+                  },
+                  "additional_context": {
+                    "type": "string",
+                    "description": "Additional background information or constraints (optional)",
+                    "maxLength": 10000
+                  },
+                  "response_format": {
+                    "type": "string",
+                    "enum": ["markdown", "json"],
+                    "default": "markdown",
+                    "description": "Output format preference"
+                  },
+                  "detail_level": {
+                    "type": "string",
+                    "enum": ["concise", "detailed"],
+                    "default": "detailed",
+                    "description": "Level of analysis detail"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created Island of Agreement analysis",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "The Island of Agreement analysis"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - missing or invalid parameters"
+          }
+        }
+      }
+    },
+    "/api/v1/analyze-icebergs": {
+      "post": {
+        "operationId": "analyzeIcebergs",
+        "summary": "Analyze Icebergs and Common Shared Space",
+        "description": "Compares both parties' positions, reasoning, and motives to identify Common Shared Space and compromise opportunities.",
+        "tags": ["Analysis"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "organization_name",
+                  "counterpart_name",
+                  "organization_positions",
+                  "organization_reasoning",
+                  "organization_motives",
+                  "counterpart_positions"
+                ],
+                "properties": {
+                  "organization_name": {
+                    "type": "string",
+                    "description": "Your organization's name"
+                  },
+                  "counterpart_name": {
+                    "type": "string",
+                    "description": "Counterpart organization/party name"
+                  },
+                  "organization_positions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 15,
+                    "description": "Your organization's visible positions/demands"
+                  },
+                  "organization_reasoning": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 15,
+                    "description": "Tactical reasoning behind your positions"
+                  },
+                  "organization_motives": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 15,
+                    "description": "Core values and motives driving your organization"
+                  },
+                  "counterpart_positions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 15,
+                    "description": "Counterpart's visible positions/demands"
+                  },
+                  "counterpart_reasoning": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 15,
+                    "description": "Your understanding of their reasoning (optional)"
+                  },
+                  "counterpart_motives": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 15,
+                    "description": "Your understanding of their core motives (optional)"
+                  },
+                  "response_format": {
+                    "type": "string",
+                    "enum": ["markdown", "json"],
+                    "default": "markdown"
+                  },
+                  "detail_level": {
+                    "type": "string",
+                    "enum": ["concise", "detailed"],
+                    "default": "detailed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully analyzed icebergs"
+          }
+        }
+      }
+    },
+    "/api/v1/guide": {
+      "get": {
+        "operationId": "getNegotiationGuide",
+        "summary": "Get Negotiation Guide",
+        "description": "Get comprehensive guide to all methodologies and best practices",
+        "tags": ["Documentation"],
+        "responses": {
+          "200": {
+            "description": "Guide retrieved successfully",
+            "content": {
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

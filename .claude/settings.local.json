@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir)",
+      "Bash(pip install -r requirements_mcp.txt)",
+      "Bash(python setup.py)",
+      "Bash(python -u setup.py)",
+      "Bash(iconv -f UTF-8 -t CP1252)",
+      "Bash(cat \"%APPDATA%\\Claude\\claude_desktop_config.json\")",
+      "Bash(python -m json.tool)",
+      "Read(//c/Users/Jhozman Camacho/AppData/Roaming/Claude/**)",
+      "Bash(dir /b)",
+      "Bash(echo.)",
+      "Read(//c/**)",
+      "Bash(docker --version)",
+      "Bash(docker-compose --version)",
+      "Bash(docker logs humanitarian-negotiation-mcp)",
+      "Bash(where ngrok)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
