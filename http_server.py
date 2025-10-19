@@ -491,22 +491,27 @@ async def shutdown_event():
 
 def main():
     """Main entry point"""
+    import os
+
+    # Get port from environment variable (Google Cloud Run uses PORT)
+    port = int(os.getenv("PORT", 8000))
+
     print("Starting Humanitarian Negotiation MCP HTTP Server...")
     print()
-    print("Access the server at:")
-    print("  - http://localhost:8000")
+    print(f"Access the server at:")
+    print(f"  - http://localhost:{port}")
     print()
     print("Documentation:")
-    print("  - Swagger UI: http://localhost:8000/docs")
-    print("  - ReDoc: http://localhost:8000/redoc")
+    print(f"  - Swagger UI: http://localhost:{port}/docs")
+    print(f"  - ReDoc: http://localhost:{port}/redoc")
     print()
-    print("Tools endpoint: http://localhost:8000/tools")
+    print(f"Tools endpoint: http://localhost:{port}/tools")
     print()
 
     uvicorn.run(
         "http_server:app",
         host="0.0.0.0",
-        port=8000,
+        port=port,
         reload=False,
         log_level="info"
     )
