@@ -1,0 +1,276 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Humanitarian Negotiation MCP API",
+    "version": "1.0.0",
+    "description": "Complete API with all 5 humanitarian negotiation analysis tools"
+  },
+  "servers": [
+    {
+      "url": "https://humanitarian-mcp-904769523449.us-central1.run.app"
+    }
+  ],
+  "paths": {
+    "/api/v1/island-of-agreement": {
+      "post": {
+        "operationId": "createIslandOfAgreement",
+        "summary": "Create Island of Agreement analysis",
+        "description": "Maps contested vs. agreed facts and convergent vs. divergent norms",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["situation_description", "organization_name", "counterpart_name"],
+                "properties": {
+                  "situation_description": {
+                    "type": "string",
+                    "description": "Description of negotiation (min 50 chars)",
+                    "minLength": 50
+                  },
+                  "organization_name": {
+                    "type": "string",
+                    "description": "Your organization name"
+                  },
+                  "counterpart_name": {
+                    "type": "string",
+                    "description": "Counterpart name"
+                  },
+                  "additional_context": {
+                    "type": "string",
+                    "description": "Additional context (optional)"
+                  },
+                  "response_format": {
+                    "type": "string",
+                    "enum": ["markdown", "json"],
+                    "default": "markdown"
+                  },
+                  "detail_level": {
+                    "type": "string",
+                    "enum": ["concise", "detailed"],
+                    "default": "detailed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Analysis completed"
+          }
+        }
+      }
+    },
+    "/api/v1/analyze-icebergs": {
+      "post": {
+        "operationId": "analyzeIcebergs",
+        "summary": "Analyze Icebergs and Common Shared Space",
+        "description": "Compares positions, reasoning, and motives between parties",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "organization_name",
+                  "counterpart_name",
+                  "organization_positions",
+                  "organization_reasoning",
+                  "organization_motives",
+                  "counterpart_positions"
+                ],
+                "properties": {
+                  "organization_name": {
+                    "type": "string"
+                  },
+                  "counterpart_name": {
+                    "type": "string"
+                  },
+                  "organization_positions": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "minItems": 1,
+                    "maxItems": 15
+                  },
+                  "organization_reasoning": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "minItems": 1,
+                    "maxItems": 15
+                  },
+                  "organization_motives": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "minItems": 1,
+                    "maxItems": 15
+                  },
+                  "counterpart_positions": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "minItems": 1,
+                    "maxItems": 15
+                  },
+                  "counterpart_reasoning": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "maxItems": 15
+                  },
+                  "counterpart_motives": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "maxItems": 15
+                  },
+                  "response_format": {
+                    "type": "string",
+                    "enum": ["markdown", "json"],
+                    "default": "markdown"
+                  },
+                  "detail_level": {
+                    "type": "string",
+                    "enum": ["concise", "detailed"],
+                    "default": "detailed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Analysis completed"
+          }
+        }
+      }
+    },
+    "/api/v1/analyze-stakeholders": {
+      "post": {
+        "operationId": "analyzeStakeholders",
+        "summary": "Analyze and prioritize stakeholders",
+        "description": "Characterizes and prioritizes stakeholders by Power, Urgency, Legitimacy, Position",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["context", "stakeholders"],
+                "properties": {
+                  "context": {
+                    "type": "string",
+                    "description": "Context of negotiation",
+                    "minLength": 50
+                  },
+                  "stakeholders": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 50,
+                    "items": {
+                      "type": "object",
+                      "required": ["name", "power", "urgency", "legitimacy", "position"],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "power": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "urgency": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "legitimacy": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "position": {
+                          "type": "number",
+                          "minimum": -1,
+                          "maximum": 1
+                        },
+                        "influenced_by": {
+                          "type": "array",
+                          "items": {"type": "string"}
+                        }
+                      }
+                    }
+                  },
+                  "response_format": {
+                    "type": "string",
+                    "enum": ["markdown", "json"],
+                    "default": "markdown"
+                  },
+                  "detail_level": {
+                    "type": "string",
+                    "enum": ["concise", "detailed"],
+                    "default": "detailed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Analysis completed"
+          }
+        }
+      }
+    },
+    "/api/v1/leverage-influence": {
+      "post": {
+        "operationId": "leverageInfluence",
+        "summary": "Develop influence tactics for target stakeholder",
+        "description": "Based on stakeholder analysis, develops tactics to influence specific stakeholder",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["target_stakeholder_name", "stakeholders_analysis_json"],
+                "properties": {
+                  "target_stakeholder_name": {
+                    "type": "string"
+                  },
+                  "stakeholders_analysis_json": {
+                    "type": "object",
+                    "description": "Complete output from stakeholder analysis"
+                  },
+                  "response_format": {
+                    "type": "string",
+                    "enum": ["markdown", "json"],
+                    "default": "markdown"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tactics developed"
+          }
+        }
+      }
+    },
+    "/api/v1/guide": {
+      "get": {
+        "operationId": "getNegotiationGuide",
+        "summary": "Get negotiation methodology guide",
+        "description": "Returns comprehensive guide to all methodologies",
+        "responses": {
+          "200": {
+            "description": "Guide retrieved"
+          }
+        }
+      }
+    }
+  }
+}
